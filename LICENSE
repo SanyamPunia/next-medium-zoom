@@ -1,0 +1,14 @@
+To use this package:
+
+1. Create a new directory for your package and navigate into it.
+2. Copy all the files and directories as shown in the file structure above.
+3. Run `npm install` to install the necessary dependencies.
+4. Run `npm run build` to compile the TypeScript files.
+5. You can then publish the package to npm using `npm publish`.
+
+To use the published package in a Next.js project:
+
+1. Install the package: `npm install next-image-zoom`
+2. Import and use the `ZoomWrapper` component as shown in the README.md file.
+
+This structure provides a clean separation of concerns, with types, hooks, and components in separate files. The main `ZoomWrapper` component is exported for easy use, and the README provides clear instructions on how to use the package.
