@@ -8,7 +8,7 @@ To use this package:
 
 To use the published package in a Next.js project:
 
-1. Install the package: `npm install next-image-zoom`
+1. Install the package: `npm install next-medium-zoom`
 2. Import and use the `ZoomWrapper` component as shown in the README.md file.
 
 This structure provides a clean separation of concerns, with types, hooks, and components in separate files. The main `ZoomWrapper` component is exported for easy use, and the README provides clear instructions on how to use the package.

@@ -1,17 +1,17 @@
-## next-image-zoom
+## next-medium-zoom
 
 A React component for zooming Next.js Image components with smooth animations and customizable options.
 
 ### Installation
 
 ```bash
-npm install next-image-zoom
+npm install next-medium-zoom
 ```
 
 ### Usage
 
 ```ts
-import { ZoomWrapper } from "next-image-zoom";
+import { ZoomWrapper } from "next-medium-zoom";
 import Image from "next/image";
 
 export default function YourComponent() {
