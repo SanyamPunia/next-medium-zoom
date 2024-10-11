@@ -12,6 +12,7 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
   transitionDuration = 300,
   enableAnimation = true,
   backgroundColor = "rgba(0, 0, 0, 0.75)",
+  zoomedImageClassName = "",
 }) => {
   const childRef = useRef<HTMLImageElement>(null);
   const [
@@ -48,6 +49,7 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
                 alt={child.props.alt}
                 width={zoomedDimensions.width}
                 height={zoomedDimensions.height}
+                className={zoomedImageClassName}
                 style={{
                   objectFit: "contain",
                   width: "100%",

@@ -21,6 +21,7 @@ export default function YourComponent() {
       transitionDuration={300}
       enableAnimation={true}
       backgroundColor="#000000cc"
+      zoomedImageClassName="rounded-lg"
     >
       <Image
         src="/your-image.jpg"
@@ -35,10 +36,11 @@ export default function YourComponent() {
 
 ### Props
 
-| Prop                 | Type         | Default               | Description                                        |
-| -------------------- | ------------ | --------------------- | -------------------------------------------------- |
-| `children`           | ReactElement | (required)            | The Next.js Image component to be wrapped          |
-| `maxZoomFactor`      | number       | 1.5                   | The maximum zoom factor for the image              |
-| `transitionDuration` | number       | 300                   | The duration of the zoom animation in milliseconds |
-| `enableAnimation`    | boolean      | true                  | Whether to enable the zoom animation               |
-| `backgroundColor`    | string       | "rgba(0, 0, 0, 0.75)" | The background color of the zoom overlay           |
+| Prop                   | Type         | Default               | Description                                        |
+| ---------------------- | ------------ | --------------------- | -------------------------------------------------- |
+| `children`             | ReactElement | (required)            | The Next.js Image component to be wrapped          |
+| `maxZoomFactor`        | number       | 1.5                   | The maximum zoom factor for the image              |
+| `transitionDuration`   | number       | 300                   | The duration of the zoom animation in milliseconds |
+| `enableAnimation`      | boolean      | true                  | Whether to enable the zoom animation               |
+| `backgroundColor`      | string       | "rgba(0, 0, 0, 0.75)" | The background color of the zoom overlay           |
+| `zoomedImageClassName` | string       | ""                    | Optional class for styling the zoomed-in image     |
