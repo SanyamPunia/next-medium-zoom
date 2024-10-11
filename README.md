@@ -2,8 +2,7 @@
 
 A React component for zooming Next.js Image components with smooth animations and customizable options.
 
-![nmz](https://github.com/user-attachments/assets/0252cd3a-0af1-4a65-bfd6-82552fcdab3c)
-
+![nmz](https://github.com/user-attachments/assets/3fbd8ca5-cda9-4117-ba70-031ba7ea1afe)
 
 ### Installation
 
