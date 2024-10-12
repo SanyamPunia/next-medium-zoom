@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback, RefObject } from 'react';
-import { ZoomState, UseZoomProps } from '../types';
+import { useState, useEffect, useCallback, RefObject } from "react";
+import { ZoomState, UseZoomProps } from "../types";
 
 export const useZoom = (
   childRef: RefObject<HTMLImageElement>,
   { maxZoomFactor, transitionDuration, enableAnimation }: UseZoomProps
-): [ZoomState, () => void, () => void] => {
+): [ZoomState, () => void] => {
   const [state, setState] = useState<ZoomState>({
     isZoomed: false,
-    isClosing: false,
+    isAnimating: false,
     zoomedDimensions: { width: 0, height: 0 },
     animationStyles: {},
   });
@@ -33,95 +33,88 @@ export const useZoom = (
         newWidth = newHeight * aspectRatio;
       }
 
-      setState(prev => ({
-        ...prev,
-        zoomedDimensions: {
-          width: Math.round(Math.min(newWidth, maxWidth)),
-          height: Math.round(Math.min(newHeight, maxHeight)),
-        },
-      }));
-
-      if (state.isZoomed) {
-        setState(prev => ({
-          ...prev,
-          animationStyles: {
-            ...prev.animationStyles,
-            width: `${Math.round(Math.min(newWidth, maxWidth))}px`,
-            height: `${Math.round(Math.min(newHeight, maxHeight))}px`,
-          },
-        }));
-      }
+      return {
+        width: Math.round(Math.min(newWidth, maxWidth)),
+        height: Math.round(Math.min(newHeight, maxHeight)),
+      };
     }
-  }, [childRef, maxZoomFactor, state.isZoomed]);
+    return { width: 0, height: 0 };
+  }, [childRef, maxZoomFactor]);
 
   useEffect(() => {
-    calculateZoomedDimensions();
-    window.addEventListener("resize", calculateZoomedDimensions);
-    return () => window.removeEventListener("resize", calculateZoomedDimensions);
-  }, [calculateZoomedDimensions]);
-
-  const toggleZoom = useCallback(() => {
-    if (!state.isZoomed) {
-      const img = childRef.current;
-      if (img) {
-        const rect = img.getBoundingClientRect();
-        setState(prev => ({
+    const handleResize = () => {
+      if (state.isZoomed) {
+        const newDimensions = calculateZoomedDimensions();
+        setState((prev) => ({
           ...prev,
-          isZoomed: true,
+          zoomedDimensions: newDimensions,
           animationStyles: {
-            position: 'fixed',
-            top: `${rect.top}px`,
-            left: `${rect.left}px`,
-            width: `${rect.width}px`,
-            height: `${rect.height}px`,
-            transition: enableAnimation ? `all ${transitionDuration}ms ease-in-out` : 'none',
-            zIndex: 9999,
+            ...prev.animationStyles,
+            width: `${newDimensions.width}px`,
+            height: `${newDimensions.height}px`,
           },
         }));
-        setTimeout(() => {
-          setState(prev => ({
-            ...prev,
-            animationStyles: {
-              ...prev.animationStyles,
-              top: '50%',
-              left: '50%',
-              transform: `translate(-50%, -50%)`,
-              width: `${prev.zoomedDimensions.width}px`,
-              height: `${prev.zoomedDimensions.height}px`,
-              maxWidth: 'calc(100vw - 40px)',
-              maxHeight: 'calc(100vh - 40px)',
-            },
-          }));
-        }, enableAnimation ? 50 : 0);
       }
-    } else {
-      closeZoom();
-    }
-  }, [childRef, enableAnimation, transitionDuration, state.isZoomed]);
+    };
 
-  const closeZoom = useCallback(() => {
-    setState(prev => ({ ...prev, isClosing: true }));
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [calculateZoomedDimensions, state.isZoomed]);
+
+  const toggleZoom = useCallback(() => {
     const img = childRef.current;
-    if (img) {
-      const rect = img.getBoundingClientRect();
-      setState(prev => ({
-        ...prev,
-        animationStyles: {
-          ...prev.animationStyles,
-          top: `${rect.top}px`,
-          left: `${rect.left}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-          transform: 'none',
-          maxWidth: 'none',
-          maxHeight: 'none',
-        },
-      }));
-    }
-    setTimeout(() => {
-      setState(prev => ({ ...prev, isZoomed: false, isClosing: false }));
-    }, enableAnimation ? transitionDuration : 0);
-  }, [childRef, enableAnimation, transitionDuration]);
+    if (!img) return;
 
-  return [state, toggleZoom, closeZoom];
+    const rect = img.getBoundingClientRect();
+    const newDimensions = calculateZoomedDimensions();
+
+    setState((prev) => ({
+      isZoomed: !prev.isZoomed,
+      isAnimating: true,
+      zoomedDimensions: newDimensions,
+      animationStyles: {
+        position: "fixed",
+        top: prev.isZoomed ? `${rect.top}px` : "50%",
+        left: prev.isZoomed ? `${rect.left}px` : "50%",
+        width: prev.isZoomed ? `${rect.width}px` : `${newDimensions.width}px`,
+        height: prev.isZoomed
+          ? `${rect.height}px`
+          : `${newDimensions.height}px`,
+        transform: prev.isZoomed ? "none" : "translate(-50%, -50%)",
+        transition: enableAnimation
+          ? `all ${transitionDuration}ms ease-in-out`
+          : "none",
+        zIndex: 9999,
+      },
+    }));
+
+    setTimeout(
+      () => {
+        setState((prev) => ({
+          ...prev,
+          isAnimating: false,
+          animationStyles: {
+            ...prev.animationStyles,
+            top: prev.isZoomed ? "50%" : `${rect.top}px`,
+            left: prev.isZoomed ? "50%" : `${rect.left}px`,
+            width: prev.isZoomed
+              ? `${newDimensions.width}px`
+              : `${rect.width}px`,
+            height: prev.isZoomed
+              ? `${newDimensions.height}px`
+              : `${rect.height}px`,
+            transform: prev.isZoomed ? "translate(-50%, -50%)" : "none",
+          },
+        }));
+      },
+      enableAnimation ? transitionDuration : 0
+    );
+  }, [
+    childRef,
+    enableAnimation,
+    transitionDuration,
+    calculateZoomedDimensions,
+  ]);
+
+  return [state, toggleZoom];
 };
