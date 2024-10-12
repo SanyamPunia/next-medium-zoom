@@ -3,22 +3,25 @@
 import React, { useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ZoomWrapperProps } from "../types";
 import { useZoom } from "../hooks/useZoom";
+
+interface ZoomWrapperProps {
+  children: React.ReactElement;
+  maxZoomFactor?: number;
+  transitionDuration?: number;
+  backgroundColor?: string;
+}
 
 export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
   children,
   maxZoomFactor = 1.5,
   transitionDuration = 300,
-  enableAnimation = true,
   backgroundColor = "rgba(0, 0, 0, 0.75)",
-  zoomedImageClassName = "",
 }) => {
   const childRef = useRef<HTMLImageElement>(null);
-  const [{ isZoomed, isAnimating, zoomedDimensions, animationStyles }, toggleZoom] = useZoom(childRef, {
+  const [{ isZoomed, zoomedDimensions, animationStyles }, toggleZoom] = useZoom(childRef, {
     maxZoomFactor,
     transitionDuration,
-    enableAnimation,
   });
 
   const child = React.Children.only(children);
@@ -31,7 +34,7 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
   return (
     <>
       {childElement}
-      {(isZoomed || isAnimating) &&
+      {isZoomed &&
         typeof window !== "undefined" &&
         createPortal(
           <div
@@ -45,7 +48,6 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
                 alt={child.props.alt}
                 width={zoomedDimensions.width}
                 height={zoomedDimensions.height}
-                className={zoomedImageClassName}
                 style={{
                   objectFit: "contain",
                   width: "100%",

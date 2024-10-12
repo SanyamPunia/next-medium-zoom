@@ -1,13 +1,22 @@
-import { useState, useEffect, useCallback, RefObject } from "react";
-import { ZoomState, UseZoomProps } from "../types";
+import { useState, useEffect, useCallback, RefObject } from 'react';
+
+interface ZoomState {
+  isZoomed: boolean;
+  zoomedDimensions: { width: number; height: number };
+  animationStyles: React.CSSProperties;
+}
+
+interface UseZoomProps {
+  maxZoomFactor: number;
+  transitionDuration: number;
+}
 
 export const useZoom = (
   childRef: RefObject<HTMLImageElement>,
-  { maxZoomFactor, transitionDuration, enableAnimation }: UseZoomProps
+  { maxZoomFactor, transitionDuration }: UseZoomProps
 ): [ZoomState, () => void] => {
   const [state, setState] = useState<ZoomState>({
     isZoomed: false,
-    isAnimating: false,
     zoomedDimensions: { width: 0, height: 0 },
     animationStyles: {},
   });
@@ -45,7 +54,7 @@ export const useZoom = (
     const handleResize = () => {
       if (state.isZoomed) {
         const newDimensions = calculateZoomedDimensions();
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           zoomedDimensions: newDimensions,
           animationStyles: {
@@ -68,53 +77,32 @@ export const useZoom = (
     const rect = img.getBoundingClientRect();
     const newDimensions = calculateZoomedDimensions();
 
-    setState((prev) => ({
+    setState(prev => ({
       isZoomed: !prev.isZoomed,
-      isAnimating: true,
       zoomedDimensions: newDimensions,
-      animationStyles: {
-        position: "fixed",
-        top: prev.isZoomed ? `${rect.top}px` : "50%",
-        left: prev.isZoomed ? `${rect.left}px` : "50%",
-        width: prev.isZoomed ? `${rect.width}px` : `${newDimensions.width}px`,
-        height: prev.isZoomed
-          ? `${rect.height}px`
-          : `${newDimensions.height}px`,
-        transform: prev.isZoomed ? "none" : "translate(-50%, -50%)",
-        transition: enableAnimation
-          ? `all ${transitionDuration}ms ease-in-out`
-          : "none",
-        zIndex: 9999,
-      },
-    }));
-
-    setTimeout(
-      () => {
-        setState((prev) => ({
-          ...prev,
-          isAnimating: false,
-          animationStyles: {
-            ...prev.animationStyles,
-            top: prev.isZoomed ? "50%" : `${rect.top}px`,
-            left: prev.isZoomed ? "50%" : `${rect.left}px`,
-            width: prev.isZoomed
-              ? `${newDimensions.width}px`
-              : `${rect.width}px`,
-            height: prev.isZoomed
-              ? `${newDimensions.height}px`
-              : `${rect.height}px`,
-            transform: prev.isZoomed ? "translate(-50%, -50%)" : "none",
+      animationStyles: !prev.isZoomed
+        ? {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            width: `${newDimensions.width}px`,
+            height: `${newDimensions.height}px`,
+            transform: 'translate(-50%, -50%)',
+            transition: `all ${transitionDuration}ms ease-in-out`,
+            zIndex: 9999,
+          }
+        : {
+            position: 'fixed',
+            top: `${rect.top}px`,
+            left: `${rect.left}px`,
+            width: `${rect.width}px`,
+            height: `${rect.height}px`,
+            transform: 'none',
+            transition: `all ${transitionDuration}ms ease-in-out`,
+            zIndex: 9999,
           },
-        }));
-      },
-      enableAnimation ? transitionDuration : 0
-    );
-  }, [
-    childRef,
-    enableAnimation,
-    transitionDuration,
-    calculateZoomedDimensions,
-  ]);
+    }));
+  }, [childRef, transitionDuration, calculateZoomedDimensions]);
 
   return [state, toggleZoom];
 };
