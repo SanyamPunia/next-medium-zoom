@@ -19,17 +19,17 @@ import Image from "next/image";
 export default function YourComponent() {
   return (
     <ZoomWrapper
-      maxZoomFactor={1.5}
-      transitionDuration={300}
+      zoomFactor={1.5}
+      bgColor="#000000"
+      overlayOpacity={0.8}
       enableAnimation={true}
-      backgroundColor="#000000cc"
-      zoomedImageClassName="rounded-lg"
     >
       <Image
-        src="/your-image.jpg"
-        alt="Your image description"
-        width={500}
+        src="/image.png"
+        alt="image alt text"
+        width={400}
         height={300}
+        className="z-50"
       />
     </ZoomWrapper>
   );
@@ -38,11 +38,16 @@ export default function YourComponent() {
 
 ### Props
 
-| Prop                   | Type         | Default               | Description                                        |
-| ---------------------- | ------------ | --------------------- | -------------------------------------------------- |
-| `children`             | ReactElement | (required)            | The Next.js Image component to be wrapped          |
-| `maxZoomFactor`        | number       | 1.5                   | The maximum zoom factor for the image              |
-| `transitionDuration`   | number       | 300                   | The duration of the zoom animation in milliseconds |
-| `enableAnimation`      | boolean      | true                  | Whether to enable the zoom animation               |
-| `backgroundColor`      | string       | "rgba(0, 0, 0, 0.75)" | The background color of the zoom overlay           |
-| `zoomedImageClassName` | string       | ""                    | Optional class for styling the zoomed-in image     |
+| Prop              | Type           | Default        | Description                                                                                     |
+| ----------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------- |
+| `children`        | `ReactElement` | **(required)** | The **Next.js Image** component or any element to be wrapped inside the zoom functionality.     |
+| `zoomFactor`      | `number`       | `2`            | The factor by which the image should zoom in when clicked.                                      |
+| `bgColor`         | `string`       | `"black"`      | The background color of the overlay when the image is zoomed in, in any valid CSS color format. |
+| `overlayOpacity`  | `number`       | `0.75`         | Opacity level of the background overlay when zoomed in.                                         |
+| `enableAnimation` | `boolean`      | `true`         | Whether to animate the zoom effect when transitioning in and out.                               |
+
+### TODOs
+
+- Add animation variant options as props
+- Custom wrapper class extension
+- Optimize implementation
