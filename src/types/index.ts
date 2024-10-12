@@ -6,12 +6,11 @@ export interface ZoomWrapperProps {
   transitionDuration?: number;
   enableAnimation?: boolean;
   backgroundColor?: string;
-  zoomedImageClassName?: string;
 }
 
 export interface ZoomState {
   isZoomed: boolean;
-  isAnimating: boolean;
+  isClosing: boolean;
   zoomedDimensions: { width: number; height: number };
   animationStyles: React.CSSProperties;
 }

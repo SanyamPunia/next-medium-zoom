@@ -3,25 +3,25 @@
 import React, { useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { ZoomWrapperProps } from "../types";
 import { useZoom } from "../hooks/useZoom";
-
-interface ZoomWrapperProps {
-  children: React.ReactElement;
-  maxZoomFactor?: number;
-  transitionDuration?: number;
-  backgroundColor?: string;
-}
 
 export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
   children,
   maxZoomFactor = 1.5,
   transitionDuration = 300,
+  enableAnimation = true,
   backgroundColor = "rgba(0, 0, 0, 0.75)",
 }) => {
   const childRef = useRef<HTMLImageElement>(null);
-  const [{ isZoomed, zoomedDimensions, animationStyles }, toggleZoom] = useZoom(childRef, {
+  const [
+    { isZoomed, isClosing, zoomedDimensions, animationStyles },
+    toggleZoom,
+    closeZoom,
+  ] = useZoom(childRef, {
     maxZoomFactor,
     transitionDuration,
+    enableAnimation,
   });
 
   const child = React.Children.only(children);
@@ -34,13 +34,13 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
   return (
     <>
       {childElement}
-      {isZoomed &&
+      {(isZoomed || isClosing) &&
         typeof window !== "undefined" &&
         createPortal(
           <div
             className="fixed inset-0 flex justify-center items-center z-50"
             style={{ backgroundColor }}
-            onClick={toggleZoom}
+            onClick={closeZoom}
           >
             <div style={animationStyles}>
               <Image
