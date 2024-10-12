@@ -26,7 +26,7 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
 
   const child = React.Children.only(children);
   const childElement = React.cloneElement(child, {
-    onClick: toggleZoom,
+    onClick: toggleZoom, // Enables zoom when clicked
     className: `cursor-zoom-in ${child.props.className || ""}`,
     ref: childRef,
   });
@@ -42,7 +42,9 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
             style={{ backgroundColor }}
             onClick={closeZoom}
           >
-            <div style={animationStyles}>
+            <div style={animationStyles} onClick={(e) => e.stopPropagation()}>
+              {" "}
+              {/* Prevents click propagation when clicking on the zoomed image */}
               <Image
                 src={child.props.src}
                 alt={child.props.alt}
@@ -53,7 +55,7 @@ export const ZoomWrapper: React.FC<ZoomWrapperProps> = ({
                   width: "100%",
                   height: "100%",
                 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()} // Prevents click propagation to the overlay when clicking the image itself
               />
             </div>
           </div>,
