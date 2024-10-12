@@ -2,21 +2,13 @@ import { ReactElement } from "react";
 
 export interface ZoomWrapperProps {
   children: ReactElement;
-  maxZoomFactor?: number;
-  transitionDuration?: number;
+  zoomFactor?: number;
+  bgColor?: string;
+  overlayOpacity?: number;
   enableAnimation?: boolean;
-  backgroundColor?: string;
 }
 
-export interface ZoomState {
-  isZoomed: boolean;
-  isClosing: boolean;
-  zoomedDimensions: { width: number; height: number };
-  animationStyles: React.CSSProperties;
-}
-
-export interface UseZoomProps {
-  maxZoomFactor: number;
-  transitionDuration: number;
-  enableAnimation: boolean;
+export interface UseZoomOptions {
+  maxZoom?: number;
+  minZoom?: number;
 }
